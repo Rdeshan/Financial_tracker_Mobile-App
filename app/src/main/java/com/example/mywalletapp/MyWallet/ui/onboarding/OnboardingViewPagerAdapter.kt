@@ -1,4 +1,4 @@
-//package com.example.imilipocket.ui.onboarding
+
 package com.example.mywalletapp.MyWallet.ui.onboarding
 
 import android.view.LayoutInflater
@@ -11,22 +11,12 @@ class OnboardingViewPagerAdapter : RecyclerView.Adapter<OnboardingViewPagerAdapt
 
     private val onboardingItems = listOf(
         OnboardingItem(
-            "Welcome to ImiliPocket",
+            "Welcome to MyWalletApp",
             "Track your expenses and manage your budget easily",
-            R.drawable.ic_wallet
+            R.drawable.preview
         ),
-        OnboardingItem(
-            "Smart Budgeting",
-            "Set budgets and get insights into your spending habits",
-            R.drawable.ic_budget
-        ),
-        OnboardingItem(
-            "Secure & Private",
-            "Your financial data is safe with us",
-            R.drawable.ic_security
-        )
-    )
 
+    )
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OnboardingViewHolder {
         val binding = ItemOnboardingBinding.inflate(
             LayoutInflater.from(parent.context),

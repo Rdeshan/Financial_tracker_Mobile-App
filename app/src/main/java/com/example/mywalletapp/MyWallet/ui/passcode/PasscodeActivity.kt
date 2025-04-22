@@ -11,7 +11,7 @@ import com.example.mywalletapp.MyWallet.ui.dashboard.DashboardActivity
 
 class PasscodeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPasscodeBinding
-    private val correctPasscode = "1234"
+    private val correctPasscode = "123"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

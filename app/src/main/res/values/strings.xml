@@ -48,6 +48,13 @@
     <string name="btn_edit">Edit</string>
     <string name="delete">Delete</string>
 
+    <!--Passcode -->
+    <string name="Enter_password_header">Enter your password</string>
+    <string name="hint_text">Password (123)</string>
+
+
+
+
     <!-- New strings from the code block -->
     <string name="total_balance">Total Balance</string>
     <string name="income">Income</string>
