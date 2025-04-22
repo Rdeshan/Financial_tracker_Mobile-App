@@ -2,6 +2,15 @@
 <resources>
     <string name="app_name">MyWallet</string>
 
+
+    <!--main page -->
+    <string name="Total">Total Balanace</string>
+    <string name="Total_Income">Total Income</string>
+    <string name="Total_Expense">Total Expense</string>
+    <string name="Category_Spending_header">Category Spending</string>
+    <string name="Income_Trend_header">Income Trend</string>
+
+
     <!-- Navigation -->
     <string name="title_dashboard">Dashboard</string>
     <string name="title_transactions">Transactions</string>
@@ -22,7 +31,7 @@
     <string name="no_transactions">No transactions yet</string>
 
     <!-- Budget -->
-    <string name="hint_monthly_budget">Monthly Budget</string>
+    <string name="hint_monthly_budget">Set Monthly Budget</string>
     <string name="budget_warning">Budget Warning: Less than 20% remaining</string>
     <string name="budget_exceeded">Budget Exceeded!</string>
 

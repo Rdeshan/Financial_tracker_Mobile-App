@@ -5,6 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TableLayout
+import android.widget.TableRow
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
@@ -15,7 +18,6 @@ import com.example.mywalletapp.MyWallet.data.Transaction
 import com.example.mywalletapp.databinding.FragmentDashboardBinding
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.PercentFormatter
-import com.github.mikephil.charting.formatter.ValueFormatter
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -64,7 +66,6 @@ class DashboardFragment : Fragment() {
 
     private fun setupUI() {
         setupPieChart()
-        setupLineCharts()
     }
 
     private fun observeViewModel() {
@@ -116,14 +117,7 @@ class DashboardFragment : Fragment() {
         viewModel.categorySpending.observe(viewLifecycleOwner) { spending ->
             try {
                 updatePieChart(spending ?: emptyMap())
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-
-        viewModel.transactions.observe(viewLifecycleOwner) { transactions ->
-            try {
-                updateLineCharts(transactions ?: emptyList())
+                updateSummaryTables(spending ?: emptyMap())
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -149,38 +143,6 @@ class DashboardFragment : Fragment() {
                 animateY(1000)
                 setNoDataText("No transactions yet")
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun setupLineCharts() {
-        try {
-            val commonSetup: com.github.mikephil.charting.charts.LineChart.() -> Unit = {
-                description.isEnabled = false
-                legend.isEnabled = false
-                setTouchEnabled(true)
-                setPinchZoom(true)
-                xAxis.valueFormatter = object : ValueFormatter() {
-                    override fun getFormattedValue(value: Float): String {
-                        return try {
-                            dateFormat.format(Date(value.toLong()))
-                        } catch (e: Exception) {
-                            ""
-                        }
-                    }
-                }
-                axisLeft.valueFormatter = object : ValueFormatter() {
-                    override fun getFormattedValue(value: Float): String {
-                        return formatCurrency(value.toDouble())
-                    }
-                }
-                axisRight.isEnabled = false
-                setNoDataText("No data available")
-            }
-
-            binding.incomeChart.apply(commonSetup)
-            binding.expenseChart.apply(commonSetup)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -220,68 +182,84 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    private fun updateLineCharts(transactions: List<Transaction>) {
+    private fun updateSummaryTables(spending: Map<String, Double>) {
         try {
-            val incomeEntries = transactions
-                .filter { it.type == Transaction.Type.INCOME }
-                .groupBy { it.date }
-                .map { (date, transactions) ->
-                    Entry(date.toFloat(), transactions.sumOf { it.amount }.toFloat())
-                }
-                .sortedBy { it.x }
+            // Clear existing rows except headers
+            binding.incomeTable.removeAllViews()
+            binding.expenseTable.removeAllViews()
 
-            val expenseEntries = transactions
-                .filter { it.type == Transaction.Type.EXPENSE }
-                .groupBy { it.date }
-                .map { (date, transactions) ->
-                    Entry(date.toFloat(), transactions.sumOf { it.amount }.toFloat())
-                }
-                .sortedBy { it.x }
+            // Add headers
+            addTableHeader(binding.incomeTable)
+            addTableHeader(binding.expenseTable)
 
-            // Update Income Chart
-            if (incomeEntries.isNotEmpty()) {
-                val incomeDataSet = LineDataSet(incomeEntries, "Income").apply {
-                    color = ContextCompat.getColor(requireContext(), R.color.green_500)
-                    setDrawCircles(true)
-                    setDrawValues(true)
-                    valueFormatter = object : ValueFormatter() {
-                        override fun getFormattedValue(value: Float): String {
-                            return formatCurrency(value.toDouble())
-                        }
-                    }
-                }
-                binding.incomeChart.data = LineData(incomeDataSet)
-            } else {
-                binding.incomeChart.data = null
-                binding.incomeChart.setNoDataText("No income transactions yet")
+            // Separate income and expense categories
+            val incomeCategories = spending.filter { it.key.startsWith("Income:") }
+            val expenseCategories = spending.filter { it.key.startsWith("Expense:") }
+
+            // Add income rows
+            incomeCategories.forEach { (category, amount) ->
+                addTableRow(binding.incomeTable, category.removePrefix("Income: "), amount)
             }
-            binding.incomeChart.invalidate()
 
-            // Update Expense Chart
-            if (expenseEntries.isNotEmpty()) {
-                val expenseDataSet = LineDataSet(expenseEntries, "Expenses").apply {
-                    color = ContextCompat.getColor(requireContext(), R.color.red_500)
-                    setDrawCircles(true)
-                    setDrawValues(true)
-                    valueFormatter = object : ValueFormatter() {
-                        override fun getFormattedValue(value: Float): String {
-                            return formatCurrency(value.toDouble())
-                        }
-                    }
-                }
-                binding.expenseChart.data = LineData(expenseDataSet)
-            } else {
-                binding.expenseChart.data = null
-                binding.expenseChart.setNoDataText("No expense transactions yet")
+            // Add expense rows
+            expenseCategories.forEach { (category, amount) ->
+                addTableRow(binding.expenseTable, category.removePrefix("Expense: "), amount)
             }
-            binding.expenseChart.invalidate()
         } catch (e: Exception) {
             e.printStackTrace()
-            binding.incomeChart.setNoDataText("Error loading data")
-            binding.expenseChart.setNoDataText("Error loading data")
-            binding.incomeChart.invalidate()
-            binding.expenseChart.invalidate()
         }
+    }
+
+    private fun addTableHeader(table: TableLayout) {
+        val headerRow = TableRow(requireContext()).apply {
+            layoutParams = TableLayout.LayoutParams(
+                TableLayout.LayoutParams.MATCH_PARENT,
+                TableLayout.LayoutParams.WRAP_CONTENT
+            )
+            setPadding(0, 8, 0, 8)
+        }
+
+        val categoryHeader = TextView(requireContext()).apply {
+            text = "Category"
+            textSize = 14f
+            setTypeface(null, android.graphics.Typeface.BOLD)
+        }
+
+        val amountHeader = TextView(requireContext()).apply {
+            text = "Amount"
+            textSize = 14f
+            gravity = android.view.Gravity.END
+            setTypeface(null, android.graphics.Typeface.BOLD)
+        }
+
+        headerRow.addView(categoryHeader)
+        headerRow.addView(amountHeader)
+        table.addView(headerRow)
+    }
+
+    private fun addTableRow(table: TableLayout, category: String, amount: Double) {
+        val row = TableRow(requireContext()).apply {
+            layoutParams = TableLayout.LayoutParams(
+                TableLayout.LayoutParams.MATCH_PARENT,
+                TableLayout.LayoutParams.WRAP_CONTENT
+            )
+            setPadding(0, 4, 0, 4)
+        }
+
+        val categoryText = TextView(requireContext()).apply {
+            text = category
+            textSize = 14f
+        }
+
+        val amountText = TextView(requireContext()).apply {
+            text = formatCurrency(amount)
+            textSize = 14f
+            gravity = android.view.Gravity.END
+        }
+
+        row.addView(categoryText)
+        row.addView(amountText)
+        table.addView(row)
     }
 
     private fun formatCurrency(amount: Double): String {

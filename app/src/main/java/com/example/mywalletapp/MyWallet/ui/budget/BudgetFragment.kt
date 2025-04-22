@@ -15,12 +15,8 @@ import com.example.mywalletapp.R
 import com.example.mywalletapp.MyWallet.data.PreferenceManager
 import com.example.mywalletapp.databinding.FragmentBudgetBinding
 import com.example.mywalletapp.MyWallet.util.NotificationHelper
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.formatter.ValueFormatter
-import java.text.NumberFormat
-import java.util.Locale
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.color.MaterialColors
 
 class BudgetFragment : Fragment() {
     private var _binding: FragmentBudgetBinding? = null
@@ -39,14 +35,14 @@ class BudgetFragment : Fragment() {
             preferenceManager = PreferenceManager(requireContext())
             viewModel = ViewModelProvider(
                 this,
-                BudgetViewModel.Factory(preferenceManager)
+                BudgetViewModel.Factory(preferenceManager, requireContext())
             )[BudgetViewModel::class.java]
             notificationHelper = NotificationHelper(requireContext())
 
             setupUI()
             setupClickListeners()
             observeViewModel()
-            setupBarChart()
+            checkNotificationPermission()
 
             return binding.root
         } catch (e: Exception) {
@@ -59,8 +55,7 @@ class BudgetFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         try {
-            updateBudgetProgress()
-            updateBarChart()
+            viewModel.loadBudget()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -75,7 +70,6 @@ class BudgetFragment : Fragment() {
         try {
             val currentBudget = preferenceManager.getMonthlyBudget()
             binding.etMonthlyBudget.setText(currentBudget.toString())
-            updateBudgetProgress()
         } catch (e: Exception) {
             e.printStackTrace()
             binding.etMonthlyBudget.setText("0")
@@ -92,12 +86,35 @@ class BudgetFragment : Fragment() {
         viewModel.budget.observe(viewLifecycleOwner) { budget ->
             try {
                 binding.etMonthlyBudget.setText(budget.toString())
-                updateBudgetProgress()
-                updateBarChart()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
+
+        viewModel.budgetAlert.observe(viewLifecycleOwner) { alert ->
+            alert?.let { showBudgetAlert(it) }
+        }
+    }
+
+    private fun showBudgetAlert(alert: BudgetViewModel.BudgetAlert) {
+        val snackbar = Snackbar.make(binding.root, alert.message, Snackbar.LENGTH_LONG)
+
+        if (alert.isWarning) {
+            snackbar.setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.red_500))
+            snackbar.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+        } else {
+            snackbar.setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.green_500))
+            snackbar.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+        }
+
+        snackbar.addCallback(object : Snackbar.Callback() {
+            override fun onDismissed(snackbar: Snackbar, event: Int) {
+                super.onDismissed(snackbar, event)
+                viewModel.clearAlert()
+            }
+        })
+
+        snackbar.show()
     }
 
     private fun saveBudget() {
@@ -108,7 +125,6 @@ class BudgetFragment : Fragment() {
                 return
             }
             viewModel.updateBudget(budget)
-            showBudgetNotification()
             Toast.makeText(requireContext(), "Budget updated", Toast.LENGTH_SHORT).show()
         } catch (e: NumberFormatException) {
             Toast.makeText(requireContext(), "Invalid budget amount", Toast.LENGTH_SHORT).show()
@@ -118,121 +134,21 @@ class BudgetFragment : Fragment() {
         }
     }
 
-    private fun showBudgetNotification() {
-        try {
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                val monthlyBudget = preferenceManager.getMonthlyBudget()
-                notificationHelper.showBudgetNotification(monthlyBudget)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun updateBudgetProgress() {
-        try {
-            val monthlyBudget = preferenceManager.getMonthlyBudget()
-            val monthlyExpenses = viewModel.getMonthlyExpenses()
-            val progress = if (monthlyBudget > 0) {
-                (monthlyExpenses / monthlyBudget * 100).toInt()
-            } else {
-                0
-            }
-            binding.progressBudget.progress = progress
-            binding.tvBudgetStatus.text = "$progress%"
-        } catch (e: Exception) {
-            e.printStackTrace()
-            binding.progressBudget.progress = 0
-            binding.tvBudgetStatus.text = "0%"
-        }
-    }
-
-    private fun setupBarChart() {
-        try {
-            binding.barChart.apply {
-                description.isEnabled = false
-                legend.isEnabled = false
-                setTouchEnabled(true)
-                setPinchZoom(true)
-                axisLeft.valueFormatter = object : ValueFormatter() {
-                    override fun getFormattedValue(value: Float): String {
-                        return formatCurrency(value.toDouble())
-                    }
-                }
-                axisRight.isEnabled = false
-                setNoDataText("No budget data available")
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun updateBarChart() {
-        try {
-            val monthlyBudget = preferenceManager.getMonthlyBudget()
-            val monthlyExpenses = viewModel.getMonthlyExpenses()
-            val remaining = monthlyBudget - monthlyExpenses
-
-            val entries = listOf(
-                BarEntry(0f, monthlyExpenses.toFloat()),
-                BarEntry(1f, remaining.toFloat())
+    private fun checkNotificationPermission() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                NOTIFICATION_PERMISSION_REQUEST_CODE
             )
-
-            val dataSet = BarDataSet(entries, "Budget").apply {
-                colors = listOf(
-                    ContextCompat.getColor(requireContext(), R.color.red_500),
-                    ContextCompat.getColor(requireContext(), R.color.green_500)
-                )
-                valueFormatter = object : ValueFormatter() {
-                    override fun getFormattedValue(value: Float): String {
-                        return formatCurrency(value.toDouble())
-                    }
-                }
-            }
-
-            binding.barChart.data = BarData(dataSet)
-            binding.barChart.invalidate()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            binding.barChart.setNoDataText("Error loading budget data")
-            binding.barChart.invalidate()
         }
     }
 
-    private fun formatCurrency(amount: Double): String {
-        return try {
-            val currency = preferenceManager.getSelectedCurrency()
-            val locale = when (currency) {
-                "USD" -> Locale.US
-                "EUR" -> Locale.GERMANY
-                "GBP" -> Locale.UK
-                "JPY" -> Locale.JAPAN
-                "INR" -> Locale("en", "IN")
-                "AUD" -> Locale("en", "AU")
-                "CAD" -> Locale("en", "CA")
-                "LKR" -> Locale("si", "LK")
-                "CNY" -> Locale("zh", "CN")
-                "SGD" -> Locale("en", "SG")
-                "MYR" -> Locale("ms", "MY")
-                "THB" -> Locale("th", "TH")
-                "IDR" -> Locale("id", "ID")
-                "PHP" -> Locale("en", "PH")
-                "VND" -> Locale("vi", "VN")
-                "KRW" -> Locale("ko", "KR")
-                "AED" -> Locale("ar", "AE")
-                "SAR" -> Locale("ar", "SA")
-                "QAR" -> Locale("ar", "QA")
-                else -> Locale.US
-            }
-            val format = NumberFormat.getCurrencyInstance(locale)
-            format.format(amount)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            "$0.00"
-        }
+    companion object {
+        private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 100
     }
 } 
