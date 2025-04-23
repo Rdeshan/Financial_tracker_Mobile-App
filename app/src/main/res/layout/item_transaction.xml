@@ -9,17 +9,21 @@
     app:cardCornerRadius="8dp"
     app:cardElevation="2dp">
 
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp">
 
+
+
         <View
             android:id="@+id/viewTypeIndicator"
             android:layout_width="4dp"
             android:layout_height="match_parent"
-            android:layout_marginEnd="16dp" />
+            android:layout_marginEnd="10dp" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -39,7 +43,7 @@
                 android:id="@+id/tvCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="10dp"
                 android:textAppearance="?attr/textAppearanceBody2"
                 android:textColor="?android:attr/textColorSecondary"
                 tools:text="Category" />
@@ -49,8 +53,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="end"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginRight="20dp">
 
             <TextView
                 android:id="@+id/tvAmount"
@@ -70,28 +74,28 @@
 
         </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/btnEdit"
+
+
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="16dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/edit_transaction"
-            android:padding="8dp"
-            android:src="@android:drawable/ic_menu_edit" />
+            android:gravity="end"
+            android:orientation="vertical">
 
-        <ImageButton
-            android:id="@+id/btnDelete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/delete_transaction"
-            android:padding="8dp"
-            android:src="@android:drawable/ic_menu_delete" />
+            <Button
+                android:id="@+id/btnEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Update"/>
 
+            <Button
+                android:id="@+id/btnDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delete"/>
+
+        </LinearLayout>
     </LinearLayout>
 
-</com.google.android.material.card.MaterialCardView> 
+</com.google.android.material.card.MaterialCardView>

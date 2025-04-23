@@ -18,7 +18,10 @@ import com.example.mywalletapp.MyWallet.data.Transaction
 import com.example.mywalletapp.databinding.FragmentDashboardBinding
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.PercentFormatter
+import com.github.mikephil.charting.charts.HorizontalBarChart
+import com.github.mikephil.charting.components.XAxis
 import java.text.NumberFormat
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -65,7 +68,10 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setupUI() {
-        setupPieChart()
+        setupBarChart() // setup the horizontal bar chart
+        binding.switchDetails.setOnCheckedChangeListener { _, checked ->
+            binding.detailsContainer.visibility = if (checked) View.VISIBLE else View.GONE
+        }
     }
 
     private fun observeViewModel() {
@@ -116,7 +122,7 @@ class DashboardFragment : Fragment() {
 
         viewModel.categorySpending.observe(viewLifecycleOwner) { spending ->
             try {
-                updatePieChart(spending ?: emptyMap())
+                updateBarChart(spending ?: emptyMap())
                 updateSummaryTables(spending ?: emptyMap())
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -124,84 +130,65 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    private fun setupPieChart() {
-        try {
-            binding.pieChart.apply {
-                description.isEnabled = false
-                legend.isEnabled = true
-                setHoleColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
-                setTransparentCircleColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
-                setEntryLabelColor(ContextCompat.getColor(requireContext(), android.R.color.black))
-                setEntryLabelTextSize(12f)
-                setUsePercentValues(true)
-                setDrawEntryLabels(true)
-                setDrawHoleEnabled(true)
-                setHoleRadius(50f)
-                setTransparentCircleRadius(55f)
-                setRotationEnabled(true)
-                setHighlightPerTapEnabled(true)
-                animateY(1000)
-                setNoDataText("No transactions yet")
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+    private fun setupBarChart() {
+        binding.barChart.apply {
+            description.isEnabled = false
+            legend.isEnabled = false
+            setDrawValueAboveBar(true)
+            setDrawGridBackground(false)
+            axisRight.isEnabled = false
+            xAxis.setDrawGridLines(false)
+            xAxis.position = XAxis.XAxisPosition.BOTTOM
+            axisLeft.axisMinimum = 0f
+            setNoDataText("No transactions yet")
+            animateY(1000)
         }
     }
 
-    private fun updatePieChart(spending: Map<String, Double>) {
-        try {
-            if (spending.isEmpty()) {
-                binding.pieChart.setNoDataText("No transactions yet")
-                binding.pieChart.invalidate()
-                return
-            }
-
-            val entries = spending.map { (category, amount) ->
-                PieEntry(amount.toFloat(), category)
-            }
-
-            val dataSet = PieDataSet(entries, "Categories").apply {
-                colors = entries.map { entry ->
-                    if (entry.label.startsWith("Income:")) {
-                        ContextCompat.getColor(requireContext(), R.color.green_500)
-                    } else {
-                        ContextCompat.getColor(requireContext(), R.color.red_500)
-                    }
-                }
-                valueFormatter = PercentFormatter(binding.pieChart)
-                valueTextSize = 12f
-                valueTextColor = ContextCompat.getColor(requireContext(), android.R.color.black)
-            }
-
-            binding.pieChart.data = PieData(dataSet)
-            binding.pieChart.invalidate()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            binding.pieChart.setNoDataText("Error loading data")
-            binding.pieChart.invalidate()
+    private fun updateBarChart(spending: Map<String, Double>) {
+        if (spending.isEmpty()) {
+            binding.barChart.setNoDataText("No transactions yet")
+            binding.barChart.invalidate()
+            return
         }
+
+        val entries = spending.entries.mapIndexed { index, (cat, amt) ->
+            BarEntry(index.toFloat(), amt.toFloat(), cat)
+        }
+
+        val dataSet = BarDataSet(entries, "").apply {
+            valueTextSize = 12f
+            valueFormatter = PercentFormatter()
+            colors = entries.map {
+                if ((it.data as String).startsWith("Income:"))
+                    ContextCompat.getColor(requireContext(), R.color.green_500)
+                else
+                    ContextCompat.getColor(requireContext(), R.color.red_500)
+            }
+        }
+
+        binding.barChart.data = BarData(dataSet)
+        binding.barChart.xAxis.valueFormatter = IndexAxisValueFormatter(
+            entries.map { it.data as String }
+        )
+        binding.barChart.invalidate()
     }
 
     private fun updateSummaryTables(spending: Map<String, Double>) {
         try {
-            // Clear existing rows except headers
             binding.incomeTable.removeAllViews()
             binding.expenseTable.removeAllViews()
 
-            // Add headers
             addTableHeader(binding.incomeTable)
             addTableHeader(binding.expenseTable)
 
-            // Separate income and expense categories
             val incomeCategories = spending.filter { it.key.startsWith("Income:") }
             val expenseCategories = spending.filter { it.key.startsWith("Expense:") }
 
-            // Add income rows
             incomeCategories.forEach { (category, amount) ->
                 addTableRow(binding.incomeTable, category.removePrefix("Income: "), amount)
             }
 
-            // Add expense rows
             expenseCategories.forEach { (category, amount) ->
                 addTableRow(binding.expenseTable, category.removePrefix("Expense: "), amount)
             }
@@ -270,4 +257,4 @@ class DashboardFragment : Fragment() {
             "$0.00"
         }
     }
-} 
+}
