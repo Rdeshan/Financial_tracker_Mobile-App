@@ -3,6 +3,7 @@ package com.example.mywalletapp.MyWallet.ui.transactions
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -35,8 +36,8 @@ class TransactionsAdapter(
         private val amountTextView: TextView = itemView.findViewById(R.id.tvAmount)
         private val dateTextView: TextView = itemView.findViewById(R.id.tvDate)
         private val typeIndicator: View = itemView.findViewById(R.id.viewTypeIndicator)
-        private val editButton: ImageButton = itemView.findViewById(R.id.btnEdit)
-        private val deleteButton: ImageButton = itemView.findViewById(R.id.btnDelete)
+        private val editButton: Button = itemView.findViewById(R.id.btnEdit)
+        private val deleteButton: Button = itemView.findViewById(R.id.btnDelete)
 
         fun bind(transaction: Transaction) {
             titleTextView.text = transaction.title

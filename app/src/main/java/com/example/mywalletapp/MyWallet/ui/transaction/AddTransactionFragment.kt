@@ -1,5 +1,6 @@
 package com.example.mywalletapp.MyWallet.ui.transaction
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,12 +16,14 @@ import com.example.mywalletapp.MyWallet.data.PreferenceManager
 import com.example.mywalletapp.MyWallet.data.Result
 import com.example.mywalletapp.MyWallet.data.Transaction
 import com.example.mywalletapp.databinding.FragmentAddTransactionBinding
-import java.util.UUID
+import java.text.SimpleDateFormat
+import java.util.*
 
 class AddTransactionFragment : Fragment() {
     private var _binding: FragmentAddTransactionBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: AddTransactionViewModel
+    private var selectedDateInMillis: Long = System.currentTimeMillis() // default today
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,7 +36,7 @@ class AddTransactionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+
         val preferenceManager = PreferenceManager(requireContext())
         val factory = object : ViewModelProvider.NewInstanceFactory() {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -48,27 +51,39 @@ class AddTransactionFragment : Fragment() {
 
     private fun setupUI() {
         binding.apply {
-            // Set up category spinner
+            // Category spinner setup
             val categories = listOf(
-                "Salary",
-                "Bonus",
-                "Investment",
-                "Food",
-                "Transport",
-                "Entertainment",
-                "Bills",
-                "Shopping",
-                "Other"
+                "Salary", "Bonus", "Investment", "Food", "Transport",
+                "Entertainment", "Bills", "Shopping", "Other"
             )
             val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             spinnerCategory.adapter = adapter
-
-            // Set default selection
             spinnerCategory.setSelection(0)
 
-            // Set default radio button selection
             radioIncome.isChecked = true
+
+            // Date picker logic
+            buttonDatePicker.setOnClickListener {
+                val calendar = Calendar.getInstance()
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH)
+                val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+                val datePickerDialog = DatePickerDialog(
+                    requireContext(),
+                    { _, selectedYear, selectedMonth, selectedDay ->
+                        val selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+                        buttonDatePicker.text = selectedDate
+
+                        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                        val date = sdf.parse(selectedDate)
+                        selectedDateInMillis = date?.time ?: System.currentTimeMillis()
+                    },
+                    year, month, day
+                )
+                datePickerDialog.show()
+            }
 
             buttonSave.setOnClickListener {
                 saveTransaction()
@@ -106,7 +121,7 @@ class AddTransactionFragment : Fragment() {
                 amount = amount,
                 category = category,
                 type = type,
-                date = System.currentTimeMillis()
+                date = selectedDateInMillis
             )
 
             viewModel.addTransaction(transaction)
@@ -131,4 +146,4 @@ class AddTransactionFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-} 
+}

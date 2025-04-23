@@ -1,4 +1,4 @@
-//package com.example.imilipocket.ui.onboarding
+
 package com.example.mywalletapp.MyWallet.ui.onboarding
 
 import android.content.Intent
@@ -27,7 +27,7 @@ class OnboardingActivity : AppCompatActivity() {
         viewPagerAdapter = OnboardingViewPagerAdapter()
         binding.viewPager.adapter = viewPagerAdapter
 
-        TabLayoutMediator(binding.tabLayout, binding.viewPager) { _, _ -> }.attach()
+
 
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -46,9 +46,7 @@ class OnboardingActivity : AppCompatActivity() {
             }
         }
 
-        binding.btnSkip.setOnClickListener {
-            startPasscodeActivity()
-        }
+
     }
 
     private fun startPasscodeActivity() {

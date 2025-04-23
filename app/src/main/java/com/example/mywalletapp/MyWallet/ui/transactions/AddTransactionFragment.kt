@@ -1,5 +1,6 @@
 package com.example.mywalletapp.MyWallet.ui.transactions
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,8 @@ import com.example.mywalletapp.MyWallet.data.PreferenceManager
 import com.example.mywalletapp.MyWallet.data.Transaction
 import com.example.mywalletapp.databinding.FragmentAddTransactionBinding
 import com.google.android.material.snackbar.Snackbar
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class AddTransactionFragment : Fragment() {
     private var _binding: FragmentAddTransactionBinding? = null
@@ -21,6 +24,9 @@ class AddTransactionFragment : Fragment() {
     private val viewModel: AddTransactionViewModel by viewModels {
         AddTransactionViewModelFactory(PreferenceManager(requireContext()))
     }
+
+    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    private var selectedDate: String = LocalDate.now().format(dateFormatter)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,26 +52,36 @@ class AddTransactionFragment : Fragment() {
         binding.spinnerCategory.adapter = adapter
 
         // Setup type radio group
-        binding.radioGroupType.setOnCheckedChangeListener { _, checkedId ->
-            when (checkedId) {
-                R.id.radioIncome -> {
-                    binding.spinnerCategory.setSelection(0) // Reset to first category
-                }
-                R.id.radioExpense -> {
-                    binding.spinnerCategory.setSelection(0) // Reset to first category
-                }
-            }
+        binding.radioGroupType.setOnCheckedChangeListener { _, _ ->
+            binding.spinnerCategory.setSelection(0) // Reset category
         }
+
+        updateDateButtonText()
     }
 
     private fun setupClickListeners() {
-        binding.buttonSave.setOnClickListener {
-            saveTransaction()
-        }
+        binding.buttonSave.setOnClickListener { saveTransaction() }
+        binding.buttonCancel.setOnClickListener { findNavController().navigateUp() }
+        binding.buttonDatePicker.setOnClickListener { showDatePicker() }
+    }
 
-        binding.buttonCancel.setOnClickListener {
-            findNavController().navigateUp()
-        }
+    private fun showDatePicker() {
+        val now = LocalDate.now()
+        val dialog = DatePickerDialog(
+            requireContext(),
+            { _, year, month, dayOfMonth ->
+                selectedDate = LocalDate.of(year, month + 1, dayOfMonth).format(dateFormatter)
+                updateDateButtonText()
+            },
+            now.year,
+            now.monthValue - 1,
+            now.dayOfMonth
+        )
+        dialog.show()
+    }
+
+    private fun updateDateButtonText() {
+        binding.buttonDatePicker.text = "Date: $selectedDate"
     }
 
     private fun observeViewModel() {
@@ -73,9 +89,7 @@ class AddTransactionFragment : Fragment() {
             when (result) {
                 is AddTransactionViewModel.SaveResult.Success -> {
                     Toast.makeText(requireContext(), "Transaction saved successfully", Toast.LENGTH_SHORT).show()
-                    if (isAdded && !isDetached) {
-                        findNavController().navigateUp()
-                    }
+                    if (isAdded && !isDetached) findNavController().navigateUp()
                 }
                 is AddTransactionViewModel.SaveResult.Error -> {
                     Snackbar.make(binding.root, result.message, Snackbar.LENGTH_LONG).show()
@@ -85,8 +99,8 @@ class AddTransactionFragment : Fragment() {
     }
 
     private fun saveTransaction() {
-        val title = binding.editTextTitle.text.toString()
-        val amountText = binding.editTextAmount.text.toString()
+        val title = binding.editTextTitle.text.toString().trim()
+        val amountText = binding.editTextAmount.text.toString().trim()
         val category = binding.spinnerCategory.selectedItem.toString()
         val type = when (binding.radioGroupType.checkedRadioButtonId) {
             R.id.radioIncome -> Transaction.Type.INCOME
@@ -107,20 +121,22 @@ class AddTransactionFragment : Fragment() {
             return
         }
 
-        try {
-            val amount = amountText.toDouble()
-            if (amount <= 0) {
-                binding.editTextAmount.error = "Amount must be greater than 0"
-                return
-            }
-            viewModel.addTransaction(title, amount, category, type)
-        } catch (e: NumberFormatException) {
-            binding.editTextAmount.error = "Invalid amount"
+        val amount = amountText.toDoubleOrNull()
+        if (amount == null || amount <= 0) {
+            binding.editTextAmount.error = "Amount must be greater than 0"
+            return
         }
+
+        val dateInMillis = LocalDate.parse(selectedDate, dateFormatter)
+            .atStartOfDay(java.time.ZoneId.systemDefault())
+            .toInstant()
+            .toEpochMilli()
+
+        viewModel.addTransaction(title, amount, category, type, dateInMillis)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-} 
+}

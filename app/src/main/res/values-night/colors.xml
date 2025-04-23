@@ -18,10 +18,12 @@
     <color name="chart_color_4">#FF018786</color>
     <color name="chart_color_5">#FFBB86FC</color>
 
-    <color name="colorPrimary">#90CAF9</color>
-    <color name="colorAccent">#FF80AB</color>
-    <color name="background">#121212</color>
-    <color name="surface">#1E1E1E</color>
-    <color name="onBackground">#FFFFFF</color>
-    <color name="onSurface">#FFFFFF</color>
-</resources> 
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="background">#FFFFFF</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="onBackground">#000000</color>
+    <color name="onSurface">#000000</color>
+
+
+</resources>

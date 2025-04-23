@@ -26,7 +26,7 @@ class NotificationHelper(private val context: Context) {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val name = "Budget Alerts"
-                val descriptionText = "Notifications for budget alerts"
+                val descriptionText = "Notifications for budget thresholds"
                 val importance = NotificationManager.IMPORTANCE_DEFAULT
                 val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                     description = descriptionText
@@ -41,56 +41,24 @@ class NotificationHelper(private val context: Context) {
 
     fun showBudgetNotification(monthlyBudget: Double) {
         try {
-            val title = "Budget Updated"
+            val title = "Budget Set"
             val message = "Your monthly budget has been set to ${formatCurrency(monthlyBudget)}"
-
-            val intent = Intent(context, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }
-            val pendingIntent = PendingIntent.getActivity(
-                context,
-                0,
-                intent,
-                PendingIntent.FLAG_IMMUTABLE
-            )
-
-            val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                .build()
-
-            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.notify(NOTIFICATION_ID, notification)
+            showNotification(title, message, false)
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    fun showBudgetAlert(monthlyBudget: Double, monthlyExpenses: Double) {
+    fun showBudgetAlert(title: String, message: String, isWarning: Boolean) {
         try {
-            val progress = if (monthlyBudget > 0) {
-                (monthlyExpenses / monthlyBudget * 100).toInt()
-            } else {
-                0
-            }
+            showNotification(title, message, isWarning)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
-            val title = when {
-                progress >= 100 -> "Budget Exceeded!"
-                progress >= 90 -> "Budget Warning!"
-                progress >= 70 -> "Budget Alert!"
-                else -> return // Don't show notification if below 70%
-            }
-
-            val remaining = monthlyBudget - monthlyExpenses
-            val message = when {
-                progress >= 100 -> "You've exceeded your budget by ${formatCurrency(monthlyExpenses - monthlyBudget)}"
-                else -> "You have ${formatCurrency(remaining)} remaining (${100 - progress}% left)"
-            }
-
+    private fun showNotification(title: String, message: String, isWarning: Boolean) {
+        try {
             val intent = Intent(context, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
@@ -101,17 +69,20 @@ class NotificationHelper(private val context: Context) {
                 PendingIntent.FLAG_IMMUTABLE
             )
 
-            val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+            val builder = NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
-                .build()
+
+            if (isWarning) {
+                builder.setColor(context.getColor(R.color.red_500))
+            }
 
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.notify(NOTIFICATION_ID, notification)
+            notificationManager.notify(NOTIFICATION_ID, builder.build())
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -119,10 +90,11 @@ class NotificationHelper(private val context: Context) {
 
     private fun formatCurrency(amount: Double): String {
         return try {
-            NumberFormat.getCurrencyInstance(Locale.getDefault()).format(amount)
+            val format = NumberFormat.getCurrencyInstance(Locale.US)
+            format.format(amount)
         } catch (e: Exception) {
             e.printStackTrace()
             "$0.00"
         }
     }
-} 
+}

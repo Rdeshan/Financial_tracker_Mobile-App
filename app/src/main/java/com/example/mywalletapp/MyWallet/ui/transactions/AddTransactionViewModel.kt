@@ -11,7 +11,7 @@ class AddTransactionViewModel(private val preferenceManager: PreferenceManager) 
     private val _saveResult = MutableLiveData<SaveResult>()
     val saveResult: LiveData<SaveResult> = _saveResult
 
-    fun addTransaction(title: String, amount: Double, category: String, type: Transaction.Type) {
+    fun addTransaction(title: String, amount: Double, category: String, type: Transaction.Type, date: Long) {
         try {
             val transaction = Transaction(
                 id = UUID.randomUUID().toString(),
@@ -19,7 +19,7 @@ class AddTransactionViewModel(private val preferenceManager: PreferenceManager) 
                 amount = amount,
                 category = category,
                 type = type,
-                date = System.currentTimeMillis()
+                date = date
             )
             preferenceManager.addTransaction(transaction)
             _saveResult.value = SaveResult.Success

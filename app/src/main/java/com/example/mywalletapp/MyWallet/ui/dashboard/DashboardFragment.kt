@@ -5,6 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TableLayout
+import android.widget.TableRow
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
@@ -15,8 +18,10 @@ import com.example.mywalletapp.MyWallet.data.Transaction
 import com.example.mywalletapp.databinding.FragmentDashboardBinding
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.PercentFormatter
-import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.charts.HorizontalBarChart
+import com.github.mikephil.charting.components.XAxis
 import java.text.NumberFormat
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -63,8 +68,10 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setupUI() {
-        setupPieChart()
-        setupLineCharts()
+        setupBarChart() // setup the horizontal bar chart
+        binding.switchDetails.setOnCheckedChangeListener { _, checked ->
+            binding.detailsContainer.visibility = if (checked) View.VISIBLE else View.GONE
+        }
     }
 
     private fun observeViewModel() {
@@ -115,173 +122,131 @@ class DashboardFragment : Fragment() {
 
         viewModel.categorySpending.observe(viewLifecycleOwner) { spending ->
             try {
-                updatePieChart(spending ?: emptyMap())
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-
-        viewModel.transactions.observe(viewLifecycleOwner) { transactions ->
-            try {
-                updateLineCharts(transactions ?: emptyList())
+                updateBarChart(spending ?: emptyMap())
+                updateSummaryTables(spending ?: emptyMap())
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
 
-    private fun setupPieChart() {
+    private fun setupBarChart() {
+        binding.barChart.apply {
+            description.isEnabled = false
+            legend.isEnabled = false
+            setDrawValueAboveBar(true)
+            setDrawGridBackground(false)
+            axisRight.isEnabled = false
+            xAxis.setDrawGridLines(false)
+            xAxis.position = XAxis.XAxisPosition.BOTTOM
+            axisLeft.axisMinimum = 0f
+            setNoDataText("No transactions yet")
+            animateY(1000)
+        }
+    }
+
+    private fun updateBarChart(spending: Map<String, Double>) {
+        if (spending.isEmpty()) {
+            binding.barChart.setNoDataText("No transactions yet")
+            binding.barChart.invalidate()
+            return
+        }
+
+        val entries = spending.entries.mapIndexed { index, (cat, amt) ->
+            BarEntry(index.toFloat(), amt.toFloat(), cat)
+        }
+
+        val dataSet = BarDataSet(entries, "").apply {
+            valueTextSize = 12f
+            valueFormatter = PercentFormatter()
+            colors = entries.map {
+                if ((it.data as String).startsWith("Income:"))
+                    ContextCompat.getColor(requireContext(), R.color.green_500)
+                else
+                    ContextCompat.getColor(requireContext(), R.color.red_500)
+            }
+        }
+
+        binding.barChart.data = BarData(dataSet)
+        binding.barChart.xAxis.valueFormatter = IndexAxisValueFormatter(
+            entries.map { it.data as String }
+        )
+        binding.barChart.invalidate()
+    }
+
+    private fun updateSummaryTables(spending: Map<String, Double>) {
         try {
-            binding.pieChart.apply {
-                description.isEnabled = false
-                legend.isEnabled = true
-                setHoleColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
-                setTransparentCircleColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
-                setEntryLabelColor(ContextCompat.getColor(requireContext(), android.R.color.black))
-                setEntryLabelTextSize(12f)
-                setUsePercentValues(true)
-                setDrawEntryLabels(true)
-                setDrawHoleEnabled(true)
-                setHoleRadius(50f)
-                setTransparentCircleRadius(55f)
-                setRotationEnabled(true)
-                setHighlightPerTapEnabled(true)
-                animateY(1000)
-                setNoDataText("No transactions yet")
+            binding.incomeTable.removeAllViews()
+            binding.expenseTable.removeAllViews()
+
+            addTableHeader(binding.incomeTable)
+            addTableHeader(binding.expenseTable)
+
+            val incomeCategories = spending.filter { it.key.startsWith("Income:") }
+            val expenseCategories = spending.filter { it.key.startsWith("Expense:") }
+
+            incomeCategories.forEach { (category, amount) ->
+                addTableRow(binding.incomeTable, category.removePrefix("Income: "), amount)
+            }
+
+            expenseCategories.forEach { (category, amount) ->
+                addTableRow(binding.expenseTable, category.removePrefix("Expense: "), amount)
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    private fun setupLineCharts() {
-        try {
-            val commonSetup: com.github.mikephil.charting.charts.LineChart.() -> Unit = {
-                description.isEnabled = false
-                legend.isEnabled = false
-                setTouchEnabled(true)
-                setPinchZoom(true)
-                xAxis.valueFormatter = object : ValueFormatter() {
-                    override fun getFormattedValue(value: Float): String {
-                        return try {
-                            dateFormat.format(Date(value.toLong()))
-                        } catch (e: Exception) {
-                            ""
-                        }
-                    }
-                }
-                axisLeft.valueFormatter = object : ValueFormatter() {
-                    override fun getFormattedValue(value: Float): String {
-                        return formatCurrency(value.toDouble())
-                    }
-                }
-                axisRight.isEnabled = false
-                setNoDataText("No data available")
-            }
-
-            binding.incomeChart.apply(commonSetup)
-            binding.expenseChart.apply(commonSetup)
-        } catch (e: Exception) {
-            e.printStackTrace()
+    private fun addTableHeader(table: TableLayout) {
+        val headerRow = TableRow(requireContext()).apply {
+            layoutParams = TableLayout.LayoutParams(
+                TableLayout.LayoutParams.MATCH_PARENT,
+                TableLayout.LayoutParams.WRAP_CONTENT
+            )
+            setPadding(0, 8, 0, 8)
         }
+
+        val categoryHeader = TextView(requireContext()).apply {
+            text = "Category"
+            textSize = 14f
+            setTypeface(null, android.graphics.Typeface.BOLD)
+        }
+
+        val amountHeader = TextView(requireContext()).apply {
+            text = "Amount"
+            textSize = 14f
+            gravity = android.view.Gravity.END
+            setTypeface(null, android.graphics.Typeface.BOLD)
+        }
+
+        headerRow.addView(categoryHeader)
+        headerRow.addView(amountHeader)
+        table.addView(headerRow)
     }
 
-    private fun updatePieChart(spending: Map<String, Double>) {
-        try {
-            if (spending.isEmpty()) {
-                binding.pieChart.setNoDataText("No transactions yet")
-                binding.pieChart.invalidate()
-                return
-            }
-
-            val entries = spending.map { (category, amount) ->
-                PieEntry(amount.toFloat(), category)
-            }
-
-            val dataSet = PieDataSet(entries, "Categories").apply {
-                colors = entries.map { entry ->
-                    if (entry.label.startsWith("Income:")) {
-                        ContextCompat.getColor(requireContext(), R.color.green_500)
-                    } else {
-                        ContextCompat.getColor(requireContext(), R.color.red_500)
-                    }
-                }
-                valueFormatter = PercentFormatter(binding.pieChart)
-                valueTextSize = 12f
-                valueTextColor = ContextCompat.getColor(requireContext(), android.R.color.black)
-            }
-
-            binding.pieChart.data = PieData(dataSet)
-            binding.pieChart.invalidate()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            binding.pieChart.setNoDataText("Error loading data")
-            binding.pieChart.invalidate()
+    private fun addTableRow(table: TableLayout, category: String, amount: Double) {
+        val row = TableRow(requireContext()).apply {
+            layoutParams = TableLayout.LayoutParams(
+                TableLayout.LayoutParams.MATCH_PARENT,
+                TableLayout.LayoutParams.WRAP_CONTENT
+            )
+            setPadding(0, 4, 0, 4)
         }
-    }
 
-    private fun updateLineCharts(transactions: List<Transaction>) {
-        try {
-            val incomeEntries = transactions
-                .filter { it.type == Transaction.Type.INCOME }
-                .groupBy { it.date }
-                .map { (date, transactions) ->
-                    Entry(date.toFloat(), transactions.sumOf { it.amount }.toFloat())
-                }
-                .sortedBy { it.x }
-
-            val expenseEntries = transactions
-                .filter { it.type == Transaction.Type.EXPENSE }
-                .groupBy { it.date }
-                .map { (date, transactions) ->
-                    Entry(date.toFloat(), transactions.sumOf { it.amount }.toFloat())
-                }
-                .sortedBy { it.x }
-
-            // Update Income Chart
-            if (incomeEntries.isNotEmpty()) {
-                val incomeDataSet = LineDataSet(incomeEntries, "Income").apply {
-                    color = ContextCompat.getColor(requireContext(), R.color.green_500)
-                    setDrawCircles(true)
-                    setDrawValues(true)
-                    valueFormatter = object : ValueFormatter() {
-                        override fun getFormattedValue(value: Float): String {
-                            return formatCurrency(value.toDouble())
-                        }
-                    }
-                }
-                binding.incomeChart.data = LineData(incomeDataSet)
-            } else {
-                binding.incomeChart.data = null
-                binding.incomeChart.setNoDataText("No income transactions yet")
-            }
-            binding.incomeChart.invalidate()
-
-            // Update Expense Chart
-            if (expenseEntries.isNotEmpty()) {
-                val expenseDataSet = LineDataSet(expenseEntries, "Expenses").apply {
-                    color = ContextCompat.getColor(requireContext(), R.color.red_500)
-                    setDrawCircles(true)
-                    setDrawValues(true)
-                    valueFormatter = object : ValueFormatter() {
-                        override fun getFormattedValue(value: Float): String {
-                            return formatCurrency(value.toDouble())
-                        }
-                    }
-                }
-                binding.expenseChart.data = LineData(expenseDataSet)
-            } else {
-                binding.expenseChart.data = null
-                binding.expenseChart.setNoDataText("No expense transactions yet")
-            }
-            binding.expenseChart.invalidate()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            binding.incomeChart.setNoDataText("Error loading data")
-            binding.expenseChart.setNoDataText("Error loading data")
-            binding.incomeChart.invalidate()
-            binding.expenseChart.invalidate()
+        val categoryText = TextView(requireContext()).apply {
+            text = category
+            textSize = 14f
         }
+
+        val amountText = TextView(requireContext()).apply {
+            text = formatCurrency(amount)
+            textSize = 14f
+            gravity = android.view.Gravity.END
+        }
+
+        row.addView(categoryText)
+        row.addView(amountText)
+        table.addView(row)
     }
 
     private fun formatCurrency(amount: Double): String {
@@ -292,4 +257,4 @@ class DashboardFragment : Fragment() {
             "$0.00"
         }
     }
-} 
+}

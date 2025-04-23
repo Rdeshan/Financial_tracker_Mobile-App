@@ -4,29 +4,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewTransactions"
+    <!-- ── Column: heading + list ─────────────────────────────────────────────── -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:padding="8dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textViewEmpty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/no_transactions"
-        android:visibility="gone" />
+        <!-- Heading -->
+        <TextView
+            android:id="@+id/tvHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Income &amp; Expenses"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:paddingStart="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="4dp" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <!-- Transactions list -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewTransactions"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:padding="8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        <!-- Empty‑state label (shown when list is empty) -->
+        <TextView
+            android:id="@+id/textViewEmpty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/no_transactions"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- ── FAB: icon + label ─────────────────────────────────────────────────── -->
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fabAddTransaction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
+        android:layout_gravity="bottom|start"
         android:layout_margin="16dp"
-        android:contentDescription="@string/add_transaction"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        android:text="Add Transaction"
+        app:icon="@android:drawable/ic_input_add"
+        android:contentDescription="@string/add_transaction" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout> 
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
