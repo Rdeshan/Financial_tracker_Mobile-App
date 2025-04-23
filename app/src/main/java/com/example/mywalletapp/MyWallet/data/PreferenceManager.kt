@@ -17,7 +17,7 @@ class PreferenceManager(context: Context) {
         private const val KEY_TRANSACTIONS = "transactions"
         private const val KEY_MONTHLY_BUDGET = "monthly_budget"
         private const val KEY_SELECTED_CURRENCY = "selected_currency"
-        private const val DEFAULT_CURRENCY = "USD"
+        private const val DEFAULT_CURRENCY = "LKR"
     }
 
     fun saveMonthlyBudget(budget: Double) {

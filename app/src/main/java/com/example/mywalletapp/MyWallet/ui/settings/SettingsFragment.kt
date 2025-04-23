@@ -1,6 +1,4 @@
-
 package com.example.mywalletapp.MyWallet.ui.settings
-
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -39,7 +37,7 @@ class SettingsFragment : Fragment() {
         setupUI()
         setupClickListeners()
         observeViewModel()
-        
+
         // Set initial dark mode state
         binding.switchDarkMode.isChecked = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
     }
@@ -67,24 +65,24 @@ class SettingsFragment : Fragment() {
             getString(R.string.currency_sar),
             getString(R.string.currency_qar)
         )
-        
+
         val adapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_dropdown_item_1line,
             currencies
         )
-        
+
         binding.spinnerCurrency.apply {
             setAdapter(adapter)
             threshold = 1
-            
+
             // Set current currency
             val currentCurrency = preferenceManager.getSelectedCurrency()
             val currencyIndex = currencies.indexOfFirst { it.startsWith(currentCurrency) }
             if (currencyIndex != -1) {
                 setText(currencies[currencyIndex], false)
             }
-            
+
             setOnItemClickListener { _, _, position, _ ->
                 val selectedCurrency = adapter.getItem(position).toString()
                 val currencyCode = selectedCurrency.substring(0, 3)
@@ -121,4 +119,4 @@ class SettingsFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-} 
+}

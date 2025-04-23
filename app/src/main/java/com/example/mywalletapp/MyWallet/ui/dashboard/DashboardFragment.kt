@@ -16,12 +16,7 @@ import com.example.mywalletapp.R
 import com.example.mywalletapp.MyWallet.data.PreferenceManager
 import com.example.mywalletapp.MyWallet.data.Transaction
 import com.example.mywalletapp.databinding.FragmentDashboardBinding
-import com.github.mikephil.charting.data.*
-import com.github.mikephil.charting.formatter.PercentFormatter
-import com.github.mikephil.charting.charts.HorizontalBarChart
-import com.github.mikephil.charting.components.XAxis
 import java.text.NumberFormat
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -29,7 +24,7 @@ class DashboardFragment : Fragment() {
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: DashboardViewModel
-    private val dateFormat = SimpleDateFormat("MMM dd", Locale.getDefault())
+    private val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,9 +63,33 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setupUI() {
-        setupBarChart() // setup the horizontal bar chart
+        setupCalendar()
         binding.switchDetails.setOnCheckedChangeListener { _, checked ->
             binding.detailsContainer.visibility = if (checked) View.VISIBLE else View.GONE
+        }
+    }
+
+    private fun setupCalendar() {
+        binding.calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
+            val calendar = Calendar.getInstance()
+            calendar.set(year, month, dayOfMonth)
+            updateDailySummary(calendar.time)
+        }
+
+        // Set initial date to today
+        updateDailySummary(Date())
+    }
+
+    private fun updateDailySummary(date: Date) {
+        binding.selectedDateText.text = dateFormat.format(date)
+        viewModel.getDailyTransactions(date)?.let { transactions ->
+            val dailyIncome = transactions.filter { it.type == Transaction.Type.INCOME }
+                .sumOf { it.amount }
+            val dailyExpense = transactions.filter { it.type == Transaction.Type.EXPENSE }
+                .sumOf { it.amount }
+
+            binding.dailyIncomeText.text = formatCurrency(dailyIncome)
+            binding.dailyExpenseText.text = formatCurrency(dailyExpense)
         }
     }
 
@@ -122,56 +141,11 @@ class DashboardFragment : Fragment() {
 
         viewModel.categorySpending.observe(viewLifecycleOwner) { spending ->
             try {
-                updateBarChart(spending ?: emptyMap())
                 updateSummaryTables(spending ?: emptyMap())
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
-    }
-
-    private fun setupBarChart() {
-        binding.barChart.apply {
-            description.isEnabled = false
-            legend.isEnabled = false
-            setDrawValueAboveBar(true)
-            setDrawGridBackground(false)
-            axisRight.isEnabled = false
-            xAxis.setDrawGridLines(false)
-            xAxis.position = XAxis.XAxisPosition.BOTTOM
-            axisLeft.axisMinimum = 0f
-            setNoDataText("No transactions yet")
-            animateY(1000)
-        }
-    }
-
-    private fun updateBarChart(spending: Map<String, Double>) {
-        if (spending.isEmpty()) {
-            binding.barChart.setNoDataText("No transactions yet")
-            binding.barChart.invalidate()
-            return
-        }
-
-        val entries = spending.entries.mapIndexed { index, (cat, amt) ->
-            BarEntry(index.toFloat(), amt.toFloat(), cat)
-        }
-
-        val dataSet = BarDataSet(entries, "").apply {
-            valueTextSize = 12f
-            valueFormatter = PercentFormatter()
-            colors = entries.map {
-                if ((it.data as String).startsWith("Income:"))
-                    ContextCompat.getColor(requireContext(), R.color.green_500)
-                else
-                    ContextCompat.getColor(requireContext(), R.color.red_500)
-            }
-        }
-
-        binding.barChart.data = BarData(dataSet)
-        binding.barChart.xAxis.valueFormatter = IndexAxisValueFormatter(
-            entries.map { it.data as String }
-        )
-        binding.barChart.invalidate()
     }
 
     private fun updateSummaryTables(spending: Map<String, Double>) {
@@ -250,11 +224,6 @@ class DashboardFragment : Fragment() {
     }
 
     private fun formatCurrency(amount: Double): String {
-        return try {
-            NumberFormat.getCurrencyInstance().format(amount)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            "$0.00"
-        }
+        return NumberFormat.getCurrencyInstance().format(amount)
     }
 }
