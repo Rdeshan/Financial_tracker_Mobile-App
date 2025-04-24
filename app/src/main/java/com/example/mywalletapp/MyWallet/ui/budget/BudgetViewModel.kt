@@ -118,17 +118,11 @@ class BudgetViewModel(
 
     private fun formatCurrency(amount: Double): String {
         return try {
-            val currency = preferenceManager.getSelectedCurrency()
-            val locale = when (currency) {
-                "USD" -> java.util.Locale.US
-                "EUR" -> java.util.Locale.GERMANY
-                "GBP" -> java.util.Locale.UK
-                else -> java.util.Locale.US
-            }
+            val locale = java.util.Locale("si", "LK") // Sri Lanka locale
             java.text.NumberFormat.getCurrencyInstance(locale).format(amount)
         } catch (e: Exception) {
             e.printStackTrace()
-            "$0.00"
+            "රු0.00"
         }
     }
 

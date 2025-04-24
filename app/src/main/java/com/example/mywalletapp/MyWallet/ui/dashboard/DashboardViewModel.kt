@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.mywalletapp.MyWallet.data.PreferenceManager
 import com.example.mywalletapp.MyWallet.data.Transaction
 import kotlinx.coroutines.launch
+import java.util.*
 
 class DashboardViewModel(private val preferenceManager: PreferenceManager) : ViewModel() {
     private val _totalBalance = MutableLiveData<Double>(0.0)
@@ -88,6 +89,28 @@ class DashboardViewModel(private val preferenceManager: PreferenceManager) : Vie
         } catch (e: Exception) {
             e.printStackTrace()
             _categorySpending.value = emptyMap()
+        }
+    }
+
+    fun getDailyTransactions(date: Date): List<Transaction>? {
+        return try {
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+            calendar.set(Calendar.HOUR_OF_DAY, 0)
+            calendar.set(Calendar.MINUTE, 0)
+            calendar.set(Calendar.SECOND, 0)
+            calendar.set(Calendar.MILLISECOND, 0)
+
+            val startOfDay = calendar.timeInMillis
+            calendar.add(Calendar.DAY_OF_MONTH, 1)
+            val endOfDay = calendar.timeInMillis
+
+            preferenceManager.getTransactions().filter { transaction ->
+                transaction.date in startOfDay until endOfDay
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 } 
