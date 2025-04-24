@@ -6,10 +6,14 @@ import android.content.SharedPreferences
 import com.example.mywalletapp.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.io.File
+import java.io.FileWriter
+import java.io.IOException
+import java.util.*
 
 class PreferenceManager(context: Context) {
     private val sharedPreferences: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-    private val gson = Gson()
+    val gson = Gson()
     private val context: Context = context
 
     companion object {
@@ -151,6 +155,64 @@ class PreferenceManager(context: Context) {
         } catch (e: Exception) {
             e.printStackTrace()
             emptyList()
+        }
+    }
+
+    fun getBackupFiles(): List<File> {
+        val backupDir = File(context.filesDir, "backups")
+        if (!backupDir.exists()) {
+            backupDir.mkdirs()
+        }
+        return backupDir.listFiles { file ->
+            file.name.startsWith("ImiliPocket_Backup_") && file.name.endsWith(".json")
+        }?.sortedByDescending { it.lastModified() } ?: emptyList()
+    }
+
+    fun createBackup(backupData: String): Boolean {
+        return try {
+            val dateFormat = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
+            val fileName = "ImiliPocket_Backup_${dateFormat.format(Date())}.json"
+            val backupDir = File(context.filesDir, "backups")
+            if (!backupDir.exists()) {
+                backupDir.mkdirs()
+            }
+            val backupFile = File(backupDir, fileName)
+            FileWriter(backupFile).use { writer ->
+                writer.write(backupData)
+            }
+            true
+        } catch (e: IOException) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    fun restoreFromBackup(backupFile: File): Boolean {
+        return try {
+            val backupData = backupFile.readText()
+            val type = object : TypeToken<Map<String, Any>>() {}.type
+            val data = gson.fromJson<Map<String, Any>>(backupData, type)
+
+            data["transactions"]?.let {
+                val transactions = gson.fromJson<List<Transaction>>(
+                    gson.toJson(it),
+                    object : TypeToken<List<Transaction>>() {}.type
+                )
+                saveTransactions(transactions)
+            }
+
+            data["budget"]?.let {
+                saveMonthlyBudget((it as Number).toDouble())
+            }
+
+            data["currency"]?.let {
+                setSelectedCurrency(it as String)
+            }
+
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
     }
 }

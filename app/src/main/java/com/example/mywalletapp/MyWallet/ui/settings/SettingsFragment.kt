@@ -13,6 +13,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.mywalletapp.R
 import com.example.mywalletapp.databinding.FragmentSettingsBinding
 import com.example.mywalletapp.MyWallet.data.PreferenceManager
+import java.text.SimpleDateFormat
+import java.util.*
 
 class SettingsFragment : Fragment() {
     private var _binding: FragmentSettingsBinding? = null
@@ -71,13 +73,17 @@ class SettingsFragment : Fragment() {
             android.R.layout.simple_dropdown_item_1line,
             currencies
         )
-
     }
 
     private fun setupClickListeners() {
         binding.apply {
+            btnBackup.setOnClickListener {
+                viewModel.createBackup()
+            }
 
-
+            btnRestore.setOnClickListener {
+                showRestoreDialog()
+            }
 
             switchDarkMode.setOnCheckedChangeListener { _, isChecked ->
                 val mode = if (isChecked) {
@@ -90,8 +96,35 @@ class SettingsFragment : Fragment() {
         }
     }
 
+    private fun showRestoreDialog() {
+        val backupFiles = viewModel.getBackupFiles()
+        if (backupFiles.isEmpty()) {
+            Toast.makeText(requireContext(), "No backup files found", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val items = backupFiles.map { file ->
+            "Backup from ${dateFormat.format(Date(file.lastModified()))}"
+        }.toTypedArray()
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Select Backup to Restore")
+            .setItems(items) { _, which ->
+                viewModel.restoreFromBackup(backupFiles[which])
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
     private fun observeViewModel() {
-        // Implement the logic to observe the ViewModel
+        viewModel.backupStatus.observe(viewLifecycleOwner) { status ->
+            Toast.makeText(requireContext(), status, Toast.LENGTH_SHORT).show()
+        }
+
+        viewModel.restoreStatus.observe(viewLifecycleOwner) { status ->
+            Toast.makeText(requireContext(), status, Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onDestroyView() {
