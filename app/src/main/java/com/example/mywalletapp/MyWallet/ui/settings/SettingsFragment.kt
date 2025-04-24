@@ -72,33 +72,12 @@ class SettingsFragment : Fragment() {
             currencies
         )
 
-        binding.spinnerCurrency.apply {
-            setAdapter(adapter)
-            threshold = 1
-
-            // Set current currency
-            val currentCurrency = preferenceManager.getSelectedCurrency()
-            val currencyIndex = currencies.indexOfFirst { it.startsWith(currentCurrency) }
-            if (currencyIndex != -1) {
-                setText(currencies[currencyIndex], false)
-            }
-
-            setOnItemClickListener { _, _, position, _ ->
-                val selectedCurrency = adapter.getItem(position).toString()
-                val currencyCode = selectedCurrency.substring(0, 3)
-                preferenceManager.setSelectedCurrency(currencyCode)
-                Toast.makeText(requireContext(), "Currency updated to $selectedCurrency", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
     private fun setupClickListeners() {
         binding.apply {
-            btnSaveCurrency.setOnClickListener {
-                val selectedCurrency = spinnerCurrency.text.toString()
-                viewModel.setSelectedCurrency(selectedCurrency)
-                Toast.makeText(requireContext(), "Currency saved", Toast.LENGTH_SHORT).show()
-            }
+
+
 
             switchDarkMode.setOnCheckedChangeListener { _, isChecked ->
                 val mode = if (isChecked) {
