@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Selected state color (Accent Color: 10%) -->
+    <item android:color="@color/Accent" android:state_checked="true" />
+    <!-- Default color (Secondary Color: 30%) -->
+    <item android:color="@color/secondary" android:state_checked="false" />
+</selector>

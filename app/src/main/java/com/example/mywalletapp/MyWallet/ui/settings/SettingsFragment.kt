@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.mywalletapp.R
@@ -39,9 +38,6 @@ class SettingsFragment : Fragment() {
         setupUI()
         setupClickListeners()
         observeViewModel()
-
-        // Set initial dark mode state
-        binding.switchDarkMode.isChecked = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
     }
 
     private fun setupUI() {
@@ -83,15 +79,6 @@ class SettingsFragment : Fragment() {
 
             btnRestore.setOnClickListener {
                 showRestoreDialog()
-            }
-
-            switchDarkMode.setOnCheckedChangeListener { _, isChecked ->
-                val mode = if (isChecked) {
-                    AppCompatDelegate.MODE_NIGHT_YES
-                } else {
-                    AppCompatDelegate.MODE_NIGHT_NO
-                }
-                AppCompatDelegate.setDefaultNightMode(mode)
             }
         }
     }

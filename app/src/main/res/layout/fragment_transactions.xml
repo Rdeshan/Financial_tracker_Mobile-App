@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/primary"> <!-- 60% primary color -->
 
-    <!-- ── Column: heading + list ─────────────────────────────────────────────── -->
+    <!-- Main Content Column -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,43 +15,58 @@
         <!-- Heading -->
         <TextView
             android:id="@+id/tvHeading"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Income &amp; Expenses"
-            android:textAppearance="?attr/textAppearanceHeadline6"
-            android:paddingStart="16dp"
-            android:paddingTop="12dp"
-            android:paddingBottom="4dp" />
+            android:text="Income  &amp; Expenses"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:paddingStart="24dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"
+            android:background="@color/secondary"
+        android:elevation="4dp"/>
 
-        <!-- Transactions list -->
+        <!-- Transactions List -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewTransactions"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:clipToPadding="false"
-            android:padding="8dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            android:padding="12dp"
+            android:scrollbarStyle="outsideOverlay"
+            android:scrollbars="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:fastScrollEnabled="true"
+          />
 
-        <!-- Empty‑state label (shown when list is empty) -->
+        <!-- Empty State -->
         <TextView
             android:id="@+id/textViewEmpty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/no_transactions"
-            android:visibility="gone" />
+            android:text="No transactions yet"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:visibility="gone"
+            android:layout_marginTop="32dp"/>
     </LinearLayout>
 
-    <!-- ── FAB: icon + label ─────────────────────────────────────────────────── -->
+    <!-- FAB -->
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fabAddTransaction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|start"
-        android:layout_margin="16dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="24dp"
         android:text="Add Transaction"
-        app:icon="@android:drawable/ic_input_add"
-        android:contentDescription="@string/add_transaction" />
-
+        android:textColor="@color/white"
+        app:backgroundTint="@color/Accent"
+    app:cornerRadius="12dp"
+    app:icon="@drawable/ic_add"
+    app:iconTint="@color/white"
+    app:iconPadding="8dp"
+    app:elevation="8dp"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
