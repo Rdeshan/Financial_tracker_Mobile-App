@@ -35,41 +35,12 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupUI()
+
         setupClickListeners()
         observeViewModel()
     }
 
-    private fun setupUI() {
-        // Setup currency spinner
-        val currencies = listOf(
-            getString(R.string.currency_usd),
-            getString(R.string.currency_eur),
-            getString(R.string.currency_gbp),
-            getString(R.string.currency_jpy),
-            getString(R.string.currency_inr),
-            getString(R.string.currency_aud),
-            getString(R.string.currency_cad),
-            getString(R.string.currency_lkr),
-            getString(R.string.currency_cny),
-            getString(R.string.currency_sgd),
-            getString(R.string.currency_myr),
-            getString(R.string.currency_thb),
-            getString(R.string.currency_idr),
-            getString(R.string.currency_php),
-            getString(R.string.currency_vnd),
-            getString(R.string.currency_krw),
-            getString(R.string.currency_aed),
-            getString(R.string.currency_sar),
-            getString(R.string.currency_qar)
-        )
 
-        val adapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_dropdown_item_1line,
-            currencies
-        )
-    }
 
     private fun setupClickListeners() {
         binding.apply {

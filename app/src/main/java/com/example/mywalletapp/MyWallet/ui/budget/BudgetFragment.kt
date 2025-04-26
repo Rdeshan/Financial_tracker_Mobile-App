@@ -100,10 +100,10 @@ class BudgetFragment : Fragment() {
         val snackbar = Snackbar.make(binding.root, alert.message, Snackbar.LENGTH_LONG)
 
         if (alert.isWarning) {
-            snackbar.setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.red_500))
+            snackbar.setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.errorColor))
             snackbar.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
         } else {
-            snackbar.setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.green_500))
+            snackbar.setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.Accent))
             snackbar.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
         }
 

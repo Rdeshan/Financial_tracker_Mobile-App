@@ -68,7 +68,7 @@ class PreferenceManager(context: Context) {
             sharedPreferences.edit().putString(KEY_TRANSACTIONS, json).apply()
         } catch (e: Exception) {
             e.printStackTrace()
-            // If saving fails, try to save an empty list as fallback
+
             try {
                 sharedPreferences.edit().putString(KEY_TRANSACTIONS, "[]").apply()
             } catch (e: Exception) {
@@ -95,7 +95,7 @@ class PreferenceManager(context: Context) {
             saveTransactions(transactions)
         } catch (e: Exception) {
             e.printStackTrace()
-            // If adding fails, try to initialize with just this transaction
+
             try {
                 saveTransactions(listOf(transaction))
             } catch (e: Exception) {
@@ -116,7 +116,7 @@ class PreferenceManager(context: Context) {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            // If update fails, try to preserve existing data
+
             try {
                 val currentTransactions = getTransactions()
                 saveTransactions(currentTransactions)

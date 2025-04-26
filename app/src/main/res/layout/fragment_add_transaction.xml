@@ -6,14 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp"
-    android:background="@color/primary"> <!-- 60% background -->
+    android:background="@color/primary">
 
-    <!-- Header -->
+
     <TextView
         android:id="@+id/headerText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Add Transaction"
+        android:text="@string/add_transaction"
         android:textColor="@color/white"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -44,7 +44,7 @@
                 android:id="@+id/textInputLayoutTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="Title"
+                android:hint="@string/Add_Transaction_Title"
                 app:boxBackgroundColor="@color/secondary"
                 app:hintTextColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -65,7 +65,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Amount"
+                android:hint="@string/Add_Transaction_Amount"
                 app:boxBackgroundColor="@color/secondary"
                 app:hintTextColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -86,7 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Transaction Type"
+                android:text="@string/Add_Transaction_Transaction_Type"
                 android:textColor="@color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textInputLayoutAmount"/>
@@ -105,24 +105,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
-                    android:text="Income"
+                    android:text="@string/Add_Transaction_Income"
                     android:textColor="@color/white"/>
 
                 <RadioButton
                     android:id="@+id/radioExpense"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Expense"
+                    android:text="@string/Add_Transaction_Expense"
                     android:textColor="@color/white"/>
             </RadioGroup>
 
-            <!-- Category Spinner -->
+
             <TextView
                 android:id="@+id/textViewCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Category"
+                android:text="@string/Add_Transaction_Category"
                 android:textColor="@color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/radioGroupType"/>
@@ -137,13 +137,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textViewCategory"/>
 
-            <!-- Date Picker -->
+
             <TextView
                 android:id="@+id/textViewDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Date"
+                android:text="@string/Add_Transaction_Date"
                 android:textColor="@color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/spinnerCategory"/>
@@ -154,7 +154,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:backgroundTint="@color/Accent"
-                android:text="Select Date"
+                android:text="@string/Add_Transaction_Select_Date_button"
                 android:textColor="@color/white"
                 app:icon="@android:drawable/ic_menu_today"
                 app:iconTint="@color/white"
@@ -162,7 +162,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textViewDate"/>
 
-            <!-- Action Buttons -->
+
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -180,7 +180,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
-                    android:text="Cancel"
+                    android:text="@string/Add_Transaction_cancel_button"
                     android:textColor="@color/Accent"
                     app:backgroundTint="@android:color/transparent"/>
 
@@ -189,7 +189,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Save"
+                    android:text="@string/Add_Transaction_Save_button"
                     android:backgroundTint="@color/Accent"
                     android:textColor="@color/white"/>
             </LinearLayout>

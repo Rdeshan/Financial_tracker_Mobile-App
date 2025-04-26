@@ -23,7 +23,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Personal Finance Tracker"
+                android:text="@string/Personal_Finance_Tracker_title"
                 android:textColor="@color/white"
                 android:textSize="28sp"
                 android:textStyle="bold"
@@ -32,12 +32,12 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Track your income, expenses, and budgeting effortlessly."
+                android:text="@string/Personal_Finance_Tracker_description"
                 android:textColor="@color/white"
                 android:textSize="16sp"/>
         </LinearLayout>
 
-        <!-- ── Totals strip ─────────────────────────────────────────────────── -->
+
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
                 android:gravity="center_vertical"
                 android:weightSum="3">
 
-                <!-- Balance -->
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Balance"
+                        android:text="@string/Balance"
                         android:textColor="@color/white"
                         android:textSize="14sp" />
 
@@ -79,7 +79,7 @@
                         android:maxLines="1" />
                 </LinearLayout>
 
-                <!-- Income -->
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Income"
+                        android:text="@string/income"
                         android:textColor="@color/white"
                         android:textSize="14sp" />
 
@@ -107,7 +107,7 @@
                         android:maxLines="1" />
                 </LinearLayout>
 
-                <!-- Expense -->
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -117,7 +117,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Expense"
+                        android:text="@string/expense"
                         android:textColor="@color/white"
                         android:textSize="14sp" />
 
@@ -135,7 +135,7 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- ── Category spend (horizontal bar) ──────────────────────────────── -->
+
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -153,7 +153,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Financial Calendar"
+                    android:text="@string/Financial_Calendar"
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -165,7 +165,7 @@
                     android:layout_marginTop="16dp"
                     android:theme="@style/CalendarViewCustom" />
 
-                <!-- Daily Summary Card -->
+
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/dailySummaryCard"
                     android:layout_width="match_parent"
@@ -185,12 +185,12 @@
                             android:id="@+id/selectedDateText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Selected Date"
+                            android:text="@string/Add_Transaction_Select_Date_button"
                             android:textColor="@color/Accent"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
-                        <!-- Income Section -->
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -200,7 +200,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Income"
+                                android:text="@string/income"
                                 android:textColor="@color/white"
                                 android:textSize="14sp" />
 
@@ -213,7 +213,7 @@
                                 android:textStyle="bold" />
                         </LinearLayout>
 
-                        <!-- Expense Section -->
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -223,7 +223,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Expenses"
+                                android:text="@string/expense"
                                 android:textColor="@color/white"
                                 android:textSize="14sp" />
 
@@ -240,7 +240,7 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- ── Income + Expense accordions ───────────────────────────────────── -->
+
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -258,7 +258,7 @@
                 android:checked="false"
                 android:padding="12dp" />
 
-            <!-- Collapsible container -->
+
             <LinearLayout
                 android:id="@+id/detailsContainer"
                 android:layout_width="match_parent"
@@ -267,11 +267,12 @@
                 android:visibility="gone"
                 android:padding="20dp">
 
-                <!-- Income Table -->
+
                 <TextView
+                    android:id="@+id/summaryID"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Income Summary"
+                    android:text="@string/Income_Summary"
                     android:textColor="@color/Accent"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -283,18 +284,19 @@
                     android:layout_marginTop="8dp"
                     android:stretchColumns="1" />
 
-                <!-- Divider -->
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginVertical="16dp"
                     android:background="@color/white" />
 
-                <!-- Expense Table -->
+
                 <TextView
+                    android:id="@+id/ExpenseID"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Expense Summary"
+                    android:text="@string/Expense_Summary"
                     android:textColor="@color/Accent"
                     android:textSize="16sp"
                     android:textStyle="bold" />

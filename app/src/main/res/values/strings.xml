@@ -75,6 +75,47 @@
     <string name="edit_transaction">Edit Transaction</string>
     <string name="delete_transaction">Delete transaction</string>
 
+
+
+    <string name="onboarding_button_text">Get started</string>
+    <string name="submit_button_password">submit</string>
+    <string name="Add_Transaction">Add Transaction</string>
+    <string name="Add_Transaction_Title">Title</string>
+    <string name="Add_Transaction_Amount">Amount</string>
+    <string name="Add_Transaction_Transaction_Type">Transaction Type</string>
+    <string name="Add_Transaction_Income">Income</string>
+    <string name="Add_Transaction_Expense">Expense</string>
+    <string name="Add_Transaction_Category">Category</string>
+    <string name="Add_Transaction_Date">Date</string>
+    <string name="Add_Transaction_Select_Date_button">Select Date</string>
+    <string name="Add_Transaction_cancel_button">Cancel</string>
+    <string name="Add_Transaction_Save_button">Save</string>
+
+
+
+
+
+
+
+    <string name="Budget_Information">Budget Information</string>
+    <string name="Monthly_Budget">Monthly Budget</string>
+    <string name="Amount">Amount </string>
+    <string name="SET_BUDGET">SET BUDGET </string>
+    <string name="Budget_text">Set your monthly budget to track your spending and receive
+        notifications when you're approaching your limit.</string>
+
+
+
+    <string name="Personal_Finance_Tracker_title">Personal Finance Tracker</string>
+    <string name="Personal_Finance_Tracker_description">Track your income, expenses, and budgeting
+        effortlessly.</string>
+    <string name="Balance">Balance</string>
+    <string name="Financial_Calendar">Financial Calendar</string>
+    <string name="Income_Summary">Income Summary</string>
+    <string name="Expense_Summary">Expense Summary</string>
+
+
+
     <string-array name="transaction_categories">
         <item>Salary</item>
         <item>Freelance</item>
@@ -91,23 +132,5 @@
         <item>Other</item>
     </string-array>
 
-    <string name="currency_usd">USD ($)</string>
-    <string name="currency_eur">EUR (€)</string>
-    <string name="currency_gbp">GBP (£)</string>
-    <string name="currency_jpy">JPY (¥)</string>
-    <string name="currency_inr">INR (₹)</string>
-    <string name="currency_aud">AUD (A$)</string>
-    <string name="currency_cad">CAD (C$)</string>
-    <string name="currency_lkr">LKR (රු)</string>
-    <string name="currency_cny">CNY (¥)</string>
-    <string name="currency_sgd">SGD (S$)</string>
-    <string name="currency_myr">MYR (RM)</string>
-    <string name="currency_thb">THB (฿)</string>
-    <string name="currency_idr">IDR (Rp)</string>
-    <string name="currency_php">PHP (₱)</string>
-    <string name="currency_vnd">VND (₫)</string>
-    <string name="currency_krw">KRW (₩)</string>
-    <string name="currency_aed">AED (د.إ)</string>
-    <string name="currency_sar">SAR (﷼)</string>
-    <string name="currency_qar">QAR (﷼)</string>
+
 </resources>

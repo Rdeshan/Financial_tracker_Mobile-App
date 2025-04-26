@@ -4,15 +4,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primary"> <!-- 60% primary color -->
+    android:background="@color/primary">
 
-    <!-- Main Content Column -->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Heading -->
         <TextView
             android:id="@+id/tvHeading"
             android:layout_width="match_parent"
@@ -25,7 +24,7 @@
             android:paddingTop="16dp"
             android:paddingBottom="8dp"
             android:background="@color/secondary"
-        android:elevation="4dp"/>
+       />
 
         <!-- Transactions List -->
         <androidx.recyclerview.widget.RecyclerView
@@ -38,10 +37,10 @@
             android:scrollbarStyle="outsideOverlay"
             android:scrollbars="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:fastScrollEnabled="true"
+
           />
 
-        <!-- Empty State -->
+
         <TextView
             android:id="@+id/textViewEmpty"
             android:layout_width="wrap_content"
@@ -54,7 +53,7 @@
             android:layout_marginTop="32dp"/>
     </LinearLayout>
 
-    <!-- FAB -->
+
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fabAddTransaction"
         android:layout_width="wrap_content"
@@ -64,9 +63,9 @@
         android:text="Add Transaction"
         android:textColor="@color/white"
         app:backgroundTint="@color/Accent"
-    app:cornerRadius="12dp"
-    app:icon="@drawable/ic_add"
-    app:iconTint="@color/white"
-    app:iconPadding="8dp"
-    app:elevation="8dp"/>
+        app:cornerRadius="12dp"
+        app:icon="@drawable/ic_add"
+        app:iconTint="@color/white"
+        app:iconPadding="8dp"
+        />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
