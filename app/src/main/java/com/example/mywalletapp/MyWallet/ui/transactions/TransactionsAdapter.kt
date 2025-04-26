@@ -46,7 +46,7 @@ class TransactionsAdapter(
             dateTextView.text = formatDate(transaction.date)
             
             // Set color based on transaction type
-            val colorRes = if (transaction.type == Transaction.Type.INCOME) R.color.green_500 else R.color.red_500
+            val colorRes = if (transaction.type == Transaction.Type.INCOME) R.color.Accent else R.color.errorColor
             typeIndicator.setBackgroundColor(ContextCompat.getColor(itemView.context, colorRes))
             
             // Set amount text color

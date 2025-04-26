@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--primary color -->
-    <color name="primary">#0D47A1  </color>
+    <color name="primary">#0D47A1</color>
+    <color name="colorPrimary">#0D47A1</color>
+    <color name="purple_700">#0D47A1</color>
 
     <!--secondary color -->
-    <color name="secondary">#1E1E1E </color>
+    <color name="secondary">#1E1E1E</color>
 
     <!--Accent color -->
-    <color name="Accent">#388E3C </color>
+    <color name="Accent">#388E3C</color>
+    <color name="colorAccent">#388E3C</color>
+    <color name="teal_700">#388E3C</color>
+
+    <!--Surface colors -->
+    <color name="background">#FFFFFF</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="onBackground">#000000</color>
+    <color name="onSurface">#000000</color>
 
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>

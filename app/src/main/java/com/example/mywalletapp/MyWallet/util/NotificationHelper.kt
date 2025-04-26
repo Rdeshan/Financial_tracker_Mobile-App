@@ -78,7 +78,7 @@ class NotificationHelper(private val context: Context) {
                 .setContentIntent(pendingIntent)
 
             if (isWarning) {
-                builder.setColor(context.getColor(R.color.red_500))
+                builder.setColor(context.getColor(R.color.errorColor))
             }
 
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
