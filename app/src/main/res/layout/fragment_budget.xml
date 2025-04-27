@@ -12,7 +12,6 @@ android:layout_height="wrap_content"
 android:orientation="vertical"
 android:padding="16dp">
 
-<!-- Budget Info Card (30% secondary color) -->
 <com.google.android.material.card.MaterialCardView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -32,7 +31,7 @@ android:padding="16dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Budget Information"
+            android:text="@string/budget_information"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -75,7 +74,7 @@ android:padding="16dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Monthly Budget"
+            android:text="@string/Monthly_Budget"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -84,7 +83,7 @@ android:padding="16dp">
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:hint="Amount"
+            android:hint="@string/hint_amount"
             app:boxBackgroundMode="outline"
             app:boxBackgroundColor="@color/secondary"
             app:boxStrokeColor="@color/Accent"
@@ -112,7 +111,7 @@ android:padding="16dp">
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_marginTop="16dp"
-        android:text="SAVE BUDGET"
+        android:text="@string/save"
         android:textAllCaps="true"
         android:textColor="@color/white"
         app:backgroundTint="@color/Accent"

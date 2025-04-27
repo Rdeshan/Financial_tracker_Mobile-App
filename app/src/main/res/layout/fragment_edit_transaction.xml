@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp"
-    android:background="@color/primary"> <!-- 60% primary color -->
+    android:background="@color/primary">
 
-    <!-- Title Input -->
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayoutTitle"
         android:layout_width="0dp"
@@ -32,7 +32,7 @@
             android:textColorHint="@color/white"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Amount Input -->
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayoutAmount"
         android:layout_width="0dp"
@@ -57,7 +57,7 @@
             android:inputType="numberDecimal"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Transaction Type -->
+
     <TextView
         android:id="@+id/textViewType"
         android:layout_width="wrap_content"
@@ -97,7 +97,7 @@
             app:buttonTint="@color/Accent"/>
     </RadioGroup>
 
-    <!-- Category -->
+
     <TextView
         android:id="@+id/textViewCategory"
         android:layout_width="wrap_content"
@@ -119,7 +119,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewCategory"/>
 
-    <!-- Action Buttons -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"

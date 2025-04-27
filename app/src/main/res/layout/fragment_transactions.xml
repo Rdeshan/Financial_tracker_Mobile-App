@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Heading -->
+
         <TextView
             android:id="@+id/tvHeading"
             android:layout_width="match_parent"
@@ -27,7 +27,7 @@
             android:background="@color/secondary"
        />
 
-        <!-- Transactions List -->
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewTransactions"
             android:layout_width="match_parent"
@@ -54,7 +54,7 @@
             android:layout_marginTop="32dp"/>
     </LinearLayout>
 
-    <!-- FAB -->
+
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fabAddTransaction"
         android:layout_width="wrap_content"
@@ -64,9 +64,9 @@
         android:text="Add Transaction"
         android:textColor="@color/white"
         app:backgroundTint="@color/Accent"
-    app:cornerRadius="12dp"
-    app:icon="@drawable/ic_add"
-    app:iconTint="@color/white"
-    app:iconPadding="8dp"
+        app:cornerRadius="12dp"
+        app:icon="@drawable/ic_add"
+        app:iconTint="@color/white"
+        app:iconPadding="8dp"
     />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

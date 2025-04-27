@@ -75,6 +75,19 @@
     <string name="edit_transaction">Edit Transaction</string>
     <string name="delete_transaction">Delete transaction</string>
 
+
+    <string name="onboarding_get_start">Get start</string>
+    <string name="Submit">Submit</string>
+    <string name="transaction_type">transaction type</string>
+    <string name="Category">Category</string>
+    <string name="Date">Date</string>
+    <string name="select_date">select date</string>
+
+
+
+    <string name="Monthly_Budget">Monthly Budget</string>
+    <string name="budget_information">Budget Information</string>
+
     <string-array name="transaction_categories">
         <item>Salary</item>
         <item>Freelance</item>
@@ -91,23 +104,5 @@
         <item>Other</item>
     </string-array>
 
-    <string name="currency_usd">USD ($)</string>
-    <string name="currency_eur">EUR (€)</string>
-    <string name="currency_gbp">GBP (£)</string>
-    <string name="currency_jpy">JPY (¥)</string>
-    <string name="currency_inr">INR (₹)</string>
-    <string name="currency_aud">AUD (A$)</string>
-    <string name="currency_cad">CAD (C$)</string>
-    <string name="currency_lkr">LKR (රු)</string>
-    <string name="currency_cny">CNY (¥)</string>
-    <string name="currency_sgd">SGD (S$)</string>
-    <string name="currency_myr">MYR (RM)</string>
-    <string name="currency_thb">THB (฿)</string>
-    <string name="currency_idr">IDR (Rp)</string>
-    <string name="currency_php">PHP (₱)</string>
-    <string name="currency_vnd">VND (₫)</string>
-    <string name="currency_krw">KRW (₩)</string>
-    <string name="currency_aed">AED (د.إ)</string>
-    <string name="currency_sar">SAR (﷼)</string>
-    <string name="currency_qar">QAR (﷼)</string>
+
 </resources>
