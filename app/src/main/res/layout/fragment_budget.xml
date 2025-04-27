@@ -103,21 +103,22 @@ android:padding="16dp">
                 android:textColor="@color/white" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSaveBudget"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="16dp"
-            android:text="SAVE BUDGET"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            app:backgroundTint="@color/Accent"
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSaveBudget"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="16dp"
+        android:text="SAVE BUDGET"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        app:backgroundTint="@color/Accent"
         app:icon="@android:drawable/ic_menu_save"
         app:iconGravity="textStart"
         app:iconTint="@color/white"
         app:cornerRadius="8dp" />
-    </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
 </LinearLayout>
     </ScrollView>
